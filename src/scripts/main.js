@@ -21,62 +21,70 @@ function syncButtons() {
   removeColumnBtn.disabled = colsCount(table) <= MIN;
 }
 
-appendRowBtn.addEventListener('click', () => {
-  if (rowsCount(table) >= MAX) {
-    return;
-  }
+if (
+  table &&
+  appendRowBtn &&
+  removeRowBtn &&
+  appendColumnBtn &&
+  removeColumnBtn
+) {
+  appendRowBtn.addEventListener('click', () => {
+    if (rowsCount(table) >= MAX) {
+      return;
+    }
 
-  const cols = colsCount(table) || MIN;
+    const cols = colsCount(table) || MIN;
 
-  const row = table.insertRow();
+    const row = table.insertRow();
 
-  for (let i = 0; i < cols; i++) {
-    const cell = row.insertCell();
+    for (let i = 0; i < cols; i++) {
+      const cell = row.insertCell();
 
-    cell.textContent = '';
-  }
+      cell.textContent = '';
+    }
 
+    syncButtons();
+  });
+
+  removeRowBtn.addEventListener('click', () => {
+    if (rowsCount(table) <= MIN) {
+      return;
+    }
+
+    table.deleteRow(rowsCount(table) - 1);
+
+    syncButtons();
+  });
+
+  appendColumnBtn.addEventListener('click', () => {
+    if (colsCount(table) >= MAX) {
+      return;
+    }
+
+    const rows = table.rows;
+
+    for (const row of rows) {
+      const cell = row.insertCell();
+
+      cell.textContent = '';
+    }
+
+    syncButtons();
+  });
+
+  removeColumnBtn.addEventListener('click', () => {
+    if (colsCount(table) <= MIN) {
+      return;
+    }
+
+    const rows = table.rows;
+    const lastIndex = colsCount(table) - 1;
+
+    for (const row of rows) {
+      row.deleteCell(lastIndex);
+    }
+
+    syncButtons();
+  });
   syncButtons();
-});
-
-removeRowBtn.addEventListener('click', () => {
-  if (rowsCount(table) <= MIN) {
-    return;
-  }
-
-  table.deleteRow(rowsCount(table) - 1);
-
-  syncButtons();
-});
-
-appendColumnBtn.addEventListener('click', () => {
-  if (colsCount(table) >= MAX) {
-    return;
-  }
-
-  const rows = table.rows;
-
-  for (const row of rows) {
-    const cell = row.insertCell();
-
-    cell.textContent = '';
-  }
-
-  syncButtons();
-});
-
-removeColumnBtn.addEventListener('click', () => {
-  if (colsCount(table) <= MIN) {
-    return;
-  }
-
-  const rows = table.rows;
-
-  for (const row of rows) {
-    row.deleteCell(colsCount(table) - 1);
-  }
-
-  syncButtons();
-});
-
-syncButtons();
+}
